@@ -1,0 +1,41 @@
+{
+  "dataset_config": {
+    "id_dataset": "malicious_tls",
+    "ood_dataset": "TLS1.3",
+    "id_samples": 27611,
+    "ood_samples": 57687,
+    "total_samples": 85298,
+    "noise_ratio": 0.5,
+    "open_ratio": 0.5,
+    "noise_mode": "sym"
+  },
+  "metrics": {
+    "AUROC": 99.73482965525001,
+    "TNR@TPR95": 99.6307660304748,
+    "Accuracy": 98.16642828671247,
+    "Precision": 99.00289724197614,
+    "Recall": 95.29535330122053,
+    "F1": 97.11375212224108,
+    "TP": 26312.0,
+    "TN": 57422.0,
+    "FP": 265.0,
+    "FN": 1299.0,
+    "threshold": -1089.6947285669792,
+    "actual_TPR": 95.29535330122053,
+    "actual_TNR": 99.54062440411184
+  },
+  "score_statistics": {
+    "id_scores": {
+      "mean": -458.5990046937658,
+      "std": 317.24274119239055,
+      "min": -2396.396469978664,
+      "max": -30.19792342957747
+    },
+    "ood_scores": {
+      "mean": -2017.4778442426668,
+      "std": 399.1064557056264,
+      "min": -3195.502133552781,
+      "max": -856.5145543674997
+    }
+  }
+}

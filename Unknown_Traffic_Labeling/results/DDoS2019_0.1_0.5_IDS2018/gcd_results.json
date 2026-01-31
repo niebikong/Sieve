@@ -1,0 +1,19 @@
+{
+  "known_acc": 1.0,
+  "known_nmi": 1.0,
+  "known_ari": 1.0,
+  "novel_acc": 0.4178428571428571,
+  "novel_nmi": 0.21511742069097062,
+  "novel_ari": 0.12360131362683087,
+  "overall_nmi": 0.7035160786693477,
+  "overall_ari": 0.6560799976536206,
+  "harmonic_acc": 0.589406442382291,
+  "labeled_acc": 1.0,
+  "unlabeled_acc": 0.4178428571428571,
+  "best_K": 8,
+  "num_known_class": 2,
+  "num_novel_clusters": 6,
+  "num_true_novel_classes": 2,
+  "num_labeled": 64603,
+  "num_unlabeled": 70000
+}

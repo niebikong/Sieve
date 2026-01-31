@@ -1,0 +1,111 @@
+Epoch [0/100]: Best accuracy@0.7843 Current accuracy@0.7843
+Epoch [1/100]: Best accuracy@0.8379 Current accuracy@0.8379
+Epoch [2/100]: Best accuracy@0.8635 Current accuracy@0.8635
+Epoch [3/100]: Best accuracy@0.8718 Current accuracy@0.8718
+Epoch [4/100]: Best accuracy@0.8718 Current accuracy@0.8699
+Epoch [5/100]: Best accuracy@0.8814 Current accuracy@0.8814
+Epoch [6/100]: Best accuracy@0.8890 Current accuracy@0.8890
+Epoch [7/100]: Best accuracy@0.9037 Current accuracy@0.9037
+Epoch [8/100]: Best accuracy@0.9037 Current accuracy@0.9020
+Epoch [9/100]: Best accuracy@0.9147 Current accuracy@0.9147
+Epoch [10/100]: Best accuracy@0.9161 Current accuracy@0.9161
+Epoch [11/100]: Best accuracy@0.9167 Current accuracy@0.9167
+Epoch [12/100]: Best accuracy@0.9248 Current accuracy@0.9248
+Epoch [13/100]: Best accuracy@0.9248 Current accuracy@0.9215
+Epoch [14/100]: Best accuracy@0.9248 Current accuracy@0.9176
+Epoch [15/100]: Best accuracy@0.9250 Current accuracy@0.9250
+Epoch [16/100]: Best accuracy@0.9250 Current accuracy@0.8993
+Epoch [17/100]: Best accuracy@0.9250 Current accuracy@0.9201
+Epoch [18/100]: Best accuracy@0.9250 Current accuracy@0.9225
+Epoch [19/100]: Best accuracy@0.9259 Current accuracy@0.9259
+Epoch [20/100]: Best accuracy@0.9302 Current accuracy@0.9302
+Epoch [21/100]: Best accuracy@0.9302 Current accuracy@0.9263
+Epoch [22/100]: Best accuracy@0.9302 Current accuracy@0.9177
+Epoch [23/100]: Best accuracy@0.9302 Current accuracy@0.9278
+Epoch [24/100]: Best accuracy@0.9302 Current accuracy@0.9276
+Epoch [25/100]: Best accuracy@0.9302 Current accuracy@0.9301
+Epoch [26/100]: Best accuracy@0.9302 Current accuracy@0.9122
+Epoch [27/100]: Best accuracy@0.9302 Current accuracy@0.9276
+Epoch [28/100]: Best accuracy@0.9302 Current accuracy@0.9292
+Epoch [29/100]: Best accuracy@0.9302 Current accuracy@0.9248
+Epoch [30/100]: Best accuracy@0.9316 Current accuracy@0.9316
+Epoch [31/100]: Best accuracy@0.9319 Current accuracy@0.9319
+Epoch [32/100]: Best accuracy@0.9319 Current accuracy@0.9302
+Epoch [33/100]: Best accuracy@0.9363 Current accuracy@0.9363
+Epoch [34/100]: Best accuracy@0.9363 Current accuracy@0.9229
+Epoch [35/100]: Best accuracy@0.9363 Current accuracy@0.9294
+Epoch [36/100]: Best accuracy@0.9389 Current accuracy@0.9389
+Epoch [37/100]: Best accuracy@0.9422 Current accuracy@0.9422
+Epoch [38/100]: Best accuracy@0.9422 Current accuracy@0.9408
+Epoch [39/100]: Best accuracy@0.9422 Current accuracy@0.9317
+Epoch [40/100]: Best accuracy@0.9422 Current accuracy@0.9372
+Epoch [41/100]: Best accuracy@0.9422 Current accuracy@0.9301
+Epoch [42/100]: Best accuracy@0.9422 Current accuracy@0.9321
+Epoch [43/100]: Best accuracy@0.9424 Current accuracy@0.9424
+Epoch [44/100]: Best accuracy@0.9424 Current accuracy@0.9385
+Epoch [45/100]: Best accuracy@0.9424 Current accuracy@0.9374
+Epoch [46/100]: Best accuracy@0.9424 Current accuracy@0.9234
+Epoch [47/100]: Best accuracy@0.9424 Current accuracy@0.9379
+Epoch [48/100]: Best accuracy@0.9424 Current accuracy@0.9411
+Epoch [49/100]: Best accuracy@0.9443 Current accuracy@0.9443
+Epoch [50/100]: Best accuracy@0.9443 Current accuracy@0.9281
+Epoch [51/100]: Best accuracy@0.9443 Current accuracy@0.9422
+Epoch [52/100]: Best accuracy@0.9443 Current accuracy@0.9391
+Epoch [53/100]: Best accuracy@0.9443 Current accuracy@0.9348
+Epoch [54/100]: Best accuracy@0.9445 Current accuracy@0.9445
+Epoch [55/100]: Best accuracy@0.9455 Current accuracy@0.9455
+Epoch [56/100]: Best accuracy@0.9455 Current accuracy@0.9455
+Epoch [57/100]: Best accuracy@0.9455 Current accuracy@0.9419
+Epoch [58/100]: Best accuracy@0.9455 Current accuracy@0.9449
+Epoch [59/100]: Best accuracy@0.9455 Current accuracy@0.9430
+Epoch [60/100]: Best accuracy@0.9455 Current accuracy@0.9395
+Epoch [61/100]: Best accuracy@0.9455 Current accuracy@0.9358
+Epoch [62/100]: Best accuracy@0.9463 Current accuracy@0.9463
+Epoch [63/100]: Best accuracy@0.9463 Current accuracy@0.9453
+Epoch [64/100]: Best accuracy@0.9463 Current accuracy@0.9459
+Epoch [65/100]: Best accuracy@0.9478 Current accuracy@0.9478
+Epoch [66/100]: Best accuracy@0.9478 Current accuracy@0.9458
+Epoch [67/100]: Best accuracy@0.9478 Current accuracy@0.9450
+Epoch [68/100]: Best accuracy@0.9478 Current accuracy@0.9468
+Epoch [69/100]: Best accuracy@0.9478 Current accuracy@0.9450
+Epoch [70/100]: Best accuracy@0.9478 Current accuracy@0.9455
+Epoch [71/100]: Best accuracy@0.9478 Current accuracy@0.9463
+Epoch [72/100]: Best accuracy@0.9478 Current accuracy@0.9465
+Epoch [73/100]: Best accuracy@0.9478 Current accuracy@0.9469
+Epoch [74/100]: Best accuracy@0.9478 Current accuracy@0.9464
+Epoch [75/100]: Best accuracy@0.9478 Current accuracy@0.9452
+Epoch [76/100]: Best accuracy@0.9478 Current accuracy@0.9472
+Epoch [77/100]: Best accuracy@0.9478 Current accuracy@0.9464
+Epoch [78/100]: Best accuracy@0.9478 Current accuracy@0.9467
+Epoch [79/100]: Best accuracy@0.9478 Current accuracy@0.9468
+Epoch [80/100]: Best accuracy@0.9478 Current accuracy@0.9460
+Epoch [81/100]: Best accuracy@0.9478 Current accuracy@0.9468
+Epoch [82/100]: Best accuracy@0.9478 Current accuracy@0.9471
+Epoch [83/100]: Best accuracy@0.9478 Current accuracy@0.9473
+Epoch [84/100]: Best accuracy@0.9478 Current accuracy@0.9455
+Epoch [85/100]: Best accuracy@0.9478 Current accuracy@0.9473
+Epoch [86/100]: Best accuracy@0.9478 Current accuracy@0.9465
+Epoch [87/100]: Best accuracy@0.9478 Current accuracy@0.9465
+Epoch [88/100]: Best accuracy@0.9478 Current accuracy@0.9468
+Epoch [89/100]: Best accuracy@0.9478 Current accuracy@0.9464
+Epoch [90/100]: Best accuracy@0.9478 Current accuracy@0.9469
+Epoch [91/100]: Best accuracy@0.9478 Current accuracy@0.9472
+Epoch [92/100]: Best accuracy@0.9478 Current accuracy@0.9468
+Epoch [93/100]: Best accuracy@0.9478 Current accuracy@0.9477
+Epoch [94/100]: Best accuracy@0.9478 Current accuracy@0.9474
+Epoch [95/100]: Best accuracy@0.9478 Current accuracy@0.9472
+Epoch [96/100]: Best accuracy@0.9478 Current accuracy@0.9475
+Epoch [97/100]: Best accuracy@0.9478 Current accuracy@0.9472
+Epoch [98/100]: Best accuracy@0.9478 Current accuracy@0.9465
+Epoch [99/100]: Best accuracy@0.9478 Current accuracy@0.9472
+
+==================================================
+FINAL TEST RESULTS
+==================================================
+Best Training Accuracy: 0.9478
+Final Test Accuracy: 0.9478
+F1-Score (Macro): 0.9033
+F1-Score (Weighted): 0.9450
+Total Test Samples: 27611
+Number of Classes: 23
+==================================================

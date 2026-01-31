@@ -1,0 +1,12 @@
+{
+  "dataset": "DDoS2019",
+  "noisy_dataset": "IDS2018",
+  "noise_ratio": 0.1,
+  "open_ratio": 0.5,
+  "max_K": 10,
+  "max_kmeans_iter": 100,
+  "k_means_init": 5,
+  "use_brent_optimization": true,
+  "prop_train_labels": 0.83,
+  "seed": 202512
+}
