@@ -19,7 +19,7 @@ logs/
         ├── Epochs_C_Measure/      # Per-epoch clustering scores
         │   └── scores_epoch_*.json
         └── OOD/                   # OOD detection results
-            ├── ssd_scores_id.json
-            ├── ssd_scores_ood.json
-            └── ssd_ood_detection_results.json
+            ├── Sieve_unknown_detect_scores_id.json
+            ├── Sieve_unknown_detect_scores_ood.json
+            └── Sieve_unknown_detect_ood_detection_results.json
 ```

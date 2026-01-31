@@ -95,7 +95,7 @@ class Sieve_unknown_detect:
         return (features - self.mean_feat) / (self.std_feat + 1e-10)
     
     def compute_scores(self, features):
-        """Compute SSD+ scores for given features"""
+        """Compute Sieve unknown detect scores for given features"""
         # Standardize features
         features_std = self._standardize_features(features)
         
@@ -202,7 +202,7 @@ def compute_ood_metrics_with_threshold(scores_id, scores_ood, threshold):
     scores = np.concatenate([scores_id, scores_ood])
     labels = np.concatenate([np.ones(len(scores_id)), np.zeros(len(scores_ood))])
 
-    # Calculate AUROC (note: using scores directly because lower SSD+ scores indicate more anomalous)
+    # Calculate AUROC (note: using scores directly because lower scores indicate more anomalous)
     fpr, tpr, thresholds_roc = metrics.roc_curve(labels, scores)
     auroc = metrics.auc(fpr, tpr)
 
@@ -254,7 +254,7 @@ def save_scores(scores, dataset_type, log_dir):
     ood_dir.mkdir(parents=True, exist_ok=True)
 
     # Save to JSON file
-    save_path = ood_dir / f'ssd_scores_{dataset_type}.json'
+    save_path = ood_dir / f'Sieve_unknown_detect_scores_{dataset_type}.json'
     with open(save_path, 'w') as f:
         json.dump(scores_dict, f, indent=2)
 
@@ -596,7 +596,7 @@ def main():
 
     # Save detailed results
     ood_dir = Path(log_dir) / 'OOD'
-    results_file = ood_dir / 'ssd_ood_detection_results.json'
+    results_file = ood_dir / 'Sieve_unknown_detect_ood_detection_results.json'
     with open(results_file, 'w') as f:
         json.dump(detailed_results, f, indent=2)
 
