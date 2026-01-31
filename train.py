@@ -59,7 +59,7 @@ def train(labeled_trainloader, modified_label, all_trainloader, encoder, classif
     proj_head.train()
     pred_head.train()
     xlosses = AverageMeter('xloss')
-    blosses = AverageMeter('bloss')  # L_batch self-supervised contrastive loss meter
+    blosses = AverageMeter('bloss')  
     labeled_train_iter = iter(labeled_trainloader)
     all_bar = tqdm(all_trainloader, desc=f'Epoch {epoch}')
 
@@ -148,7 +148,7 @@ def train(labeled_trainloader, modified_label, all_trainloader, encoder, classif
 
         Lbatch = (loss_1 + loss_2) * 0.5
 
-        # Combine losses (removed InfoNCE term)
+        # Combine losses
         loss = Lce + args.lambda_fc * Lbatch
 
         # Update meters
@@ -480,8 +480,8 @@ def main():
         raise ValueError(f"Unsupported dataset: {args.dataset}. Choose from 'malicious_tls' or 'DDoS2019'")
 
     # Data augmentation setup
-    strong_transform = FeatureSwappingTransform(swap_ratio=0.05)  # 强增强使用较大的交换比例
-    weak_transform = FeatureSwappingTransform(swap_ratio=0)   # 弱增强使用较小的交换比例
+    strong_transform = FeatureSwappingTransform(swap_ratio=0.05)  
+    weak_transform = FeatureSwappingTransform(swap_ratio=0)   
     none_transform = None
 
     # Generate train dataset with noise (fixed to malicious_tls with ids2017 as noise)
@@ -597,11 +597,10 @@ def main():
             sampler=sampler, num_workers=4, drop_last=True
         )
 
-        # Use all_loader for self-supervised contrastive learning (L_batch)
+        # Use all_loader for self-supervised contrastive learning 
         # Note: all_loader contains ALL training samples (including clean_id)
         print(f'Epoch {epoch}: Total samples={len(all_data)}, Clean (D_labeled)={len(clean_id)} ({len(clean_id)/len(all_data)*100:.1f}%)')
 
-        # Train one epoch: L_ce on labeled_loader, L_batch on all_loader
         train(labeled_loader, modified_label, all_loader, encoder, classifier, proj_head, pred_head, optimizer, epoch, args, clean_label, log_dir)
 
         # Evaluate and save checkpoint

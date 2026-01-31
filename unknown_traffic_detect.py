@@ -9,12 +9,11 @@ from sklearn import metrics
 from tqdm import tqdm
 import argparse
 
-# Import necessary modules
 from models.preresnet import DeepResNet
 from datasets.dataloader_tls import TLSDataset, GaussianNoiseTransform, FeatureSwappingTransform, load_IDS2018, load_TLS13
 from utils import weighted_knn
 
-# Use the same argument parser as main_tls_L_batch_only.py
+
 parser = argparse.ArgumentParser('Unknown Detection using Sieve')
 parser.add_argument('--dataset', default='malicious_tls', choices=['malicious_tls', 'DDoS2019'],
                     help='main dataset name: malicious_tls or DDoS2019')
@@ -450,10 +449,6 @@ def main():
     encoder.cuda()
     classifier.cuda()
     
-    # Setup data transforms
-    # strong_transform = FeatureSwappingTransform(swap_ratio=0.05)  # 强增强使用较大的交换比例
-    # weak_transform = FeatureSwappingTransform(swap_ratio=0)   # 弱增强使用较小的交换比例
-    # none_transform = None
     weak_transform = GaussianNoiseTransform(mean=0., std=0.01)
     none_transform = None
 

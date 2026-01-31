@@ -1,8 +1,3 @@
-'''
-PreActResNet models.
-Modified based on torchvision.models.resnet
-The order inside residual blocks is wrong actually.
-'''
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

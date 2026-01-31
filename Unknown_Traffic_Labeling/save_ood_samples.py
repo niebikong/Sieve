@@ -319,9 +319,8 @@ def main():
     encoder.cuda()
     classifier.cuda()
     
-    # Setup data transforms (consistent with main_tls_L_batch_only_all_data.py)
-    strong_transform = FeatureSwappingTransform(swap_ratio=0.05)  # 强增强使用较大的交换比例
-    weak_transform = FeatureSwappingTransform(swap_ratio=0)   # 弱增强使用较小的交换比例
+    strong_transform = FeatureSwappingTransform(swap_ratio=0.05)  
+    weak_transform = FeatureSwappingTransform(swap_ratio=0)   
     none_transform = None
     
     # Load datasets
