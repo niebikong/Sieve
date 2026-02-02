@@ -1,16 +1,8 @@
 # Sieve
 
-**Fine-grained Unknown Encrypted Malicious Traffic Detection and Analysis Learning from Mixed Noisy Labels**
 
 ![Sieve Framework](utils/Sieve.png)
 
-## Introduction
-
-In this paper, we introduce **Sieve**, a robust framework designed for the fine-grained detection and analysis of unknown encrypted malicious traffic in mixed noise conditions. Sieve consists of three collaborative modules:
-
-1. **Noise-Resilient Label Correction Module**: Filters out mixed noise using neighbor consistency metrics and confidence-based subset expansion
-2. **Post-hoc Detection Module**: Employs Mahalanobis distance in a purified, compact feature space to identify unknown traffic
-3. **Unknown Traffic Labeling Module**: Utilizes semi-supervised clustering to facilitate efficient updates of the dataset
 
 ## Requirements
 
