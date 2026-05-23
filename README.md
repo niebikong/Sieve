@@ -18,8 +18,11 @@ matplotlib==3.8.2
 Full dependencies: see `requirements.txt`
 
 ## Datasets
+MAL_TLS2023 dataset: https://github.com/gcx-Yuan/BoAu
+DDoS2019 dataset: https://www.unb.ca/cic/datasets/ddos-2019.html
 
-Coming soon!
+The preprocessing method for TLS traffic can be found in `datasets/TLS_feature_extract.py`
+
 
 ## Using Sieve
 
