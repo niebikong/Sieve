@@ -44,7 +44,7 @@ parser.add_argument('--gpuid', default='0', type=str, help='Selected GPU (defaul
 parser.add_argument('--run_path', type=str, help='run path containing all results')
 
 
-def train(labeled_trainloader, modified_label, all_trainloader, encoder, classifier, proj_head, pred_head, optimizer, epoch, args, clean_label=None, log_dir=None):
+def train(labeled_trainloader, modified_label, all_trainloader, encoder, classifier, proj_head, pred_head, optimizer, epoch, args, log_dir=None):
     """
     Training function - Alternative version using ALL data for L_batch:
     - labeled_trainloader: D_labeled (clean samples selected by sample selection)
@@ -162,45 +162,6 @@ def train(labeled_trainloader, modified_label, all_trainloader, encoder, classif
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
-    # Calculate and print label accuracy after each epoch
-    if clean_label is not None:
-        # Calculate accuracy of modified_label compared to clean_label
-        # Only consider samples that are in the training set (not open-set noise)
-        valid_mask = clean_label < args.num_classes  # Exclude open-set samples (labeled as num_classes)
-
-        if valid_mask.sum() > 0:
-            clean_labels_valid = clean_label[valid_mask]
-            modified_labels_valid = modified_label[valid_mask]
-
-            # Calculate accuracy
-            correct_labels = (clean_labels_valid == modified_labels_valid).sum().item()
-            total_labels = valid_mask.sum().item()  # Total number of ID samples
-            label_accuracy = correct_labels / total_labels * 100
-            open_set_samples = (~valid_mask).sum().item()
-
-            # Print to console
-            print(f"\n[Epoch {epoch}] Label Accuracy: {correct_labels}/{total_labels} = {label_accuracy:.2f}%")
-            print(f"[Epoch {epoch}] ID samples: {total_labels}, Open-set samples: {open_set_samples}")
-
-            # Write to log file
-            if log_dir is not None:
-                import os
-                log_file_path = os.path.join(log_dir, 'epoch_label_acc.txt')
-                with open(log_file_path, 'a') as f:
-                    f.write(f"Epoch {epoch}: Label Accuracy = {correct_labels}/{total_labels} = {label_accuracy:.2f}%, "
-                           f"ID samples = {total_labels}, Open-set samples = {open_set_samples}\n")
-        else:
-            error_msg = f"\n[Epoch {epoch}] No valid clean samples found for label accuracy calculation"
-            print(error_msg)
-
-            # Write error to log file
-            if log_dir is not None:
-                import os
-                log_file_path = os.path.join(log_dir, 'epoch_label_acc.txt')
-                with open(log_file_path, 'a') as f:
-                    f.write(f"Epoch {epoch}: No valid clean samples found for label accuracy calculation\n")
-
 
 def test(testloader, encoder, classifier, epoch):
     encoder.eval()
@@ -372,7 +333,7 @@ def save_scores(scores_clean, scores_closed_noise, scores_open_noise, epoch, run
     with open(save_path, 'w') as f:
         json.dump(scores_dict, f)
 
-def evaluate(dataloader, encoder, classifier, args, noisy_label, clean_label, epoch, stat_logs, log_dir=None):
+def evaluate(dataloader, encoder, classifier, args, noisy_label, epoch, stat_logs, log_dir=None):
     encoder.eval()
     classifier.eval()
     feature_bank = []
@@ -389,7 +350,7 @@ def evaluate(dataloader, encoder, classifier, args, noisy_label, clean_label, ep
 
         feature_bank = F.normalize(torch.cat(feature_bank, dim=0), dim=1)
 
-        # Sample relabelling
+        # Stage 1: confidence-based relabelling on all samples
         prediction_cls = torch.softmax(torch.cat(prediction, dim=0), dim=1)
         his_score, his_label = prediction_cls.max(1)
         print(f'Prediction track: mean: {his_score.mean()} max: {his_score.max()} min: {his_score.min()}')
@@ -397,56 +358,39 @@ def evaluate(dataloader, encoder, classifier, args, noisy_label, clean_label, ep
         modified_label = torch.clone(noisy_label).detach()
         modified_label[conf_id] = his_label[conf_id]
 
-        # Sample selection
-        # Increase chunks for large datasets to avoid OOM
+        # Stage 2: neighbor-consistency selection without using ground-truth labels
         num_samples = len(feature_bank)
         chunks = max(10, num_samples // 10000)  # At least 10 chunks, or 1 chunk per 10k samples
-        prediction_knn = weighted_knn(feature_bank, feature_bank, modified_label, args.num_classes, args.k, chunks)
+        prediction_knn = weighted_knn(feature_bank, feature_bank, modified_label, args.num_classes, args.k, chunks, exclude_self=True)
         vote_y = torch.gather(prediction_knn, 1, modified_label.view(-1, 1)).squeeze()
         vote_max = prediction_knn.max(dim=1)[0]
         right_score = vote_y / vote_max
-        # 根据标签正确性划分 clean / closed noise / open noise（open noise 的 clean_label == num_classes）
-        clean_id = torch.where(modified_label == clean_label)[0]
-        noisy_closed_id = torch.where((modified_label != clean_label) & (clean_label < args.num_classes))[0]
-        noisy_open_id = torch.where((modified_label != clean_label) & (clean_label == args.num_classes))[0]
 
-        # Save scores for clean / closed noise / open noise
-        clean_scores = right_score[clean_id]
-        closed_noise_scores = right_score[noisy_closed_id]
-        open_noise_scores = right_score[noisy_open_id]
-        # save_scores(clean_scores, closed_noise_scores, open_noise_scores, epoch, args.run_path, args.dataset)
+        # Clean set: xi threshold on neighbor consistency
+        clean_id = torch.where(right_score >= args.xi)[0]
+        noisy_id = torch.where(right_score < args.xi)[0]
 
-        # Save max prediction confidence for clean / closed noise / open noise
-        clean_predict = his_score[clean_id]
-        closed_noise_predict = his_score[noisy_closed_id]
-        open_noise_predict = his_score[noisy_open_id]
-        # save_predict(clean_predict, closed_noise_predict, open_noise_predict, epoch, args.run_path, args.dataset)
+        # Expand clean subset with high-confidence relabeling
+        expand_id = torch.where((right_score < args.xi) & (his_score >= args.zeta))[0]
+        expanded_label = modified_label.clone()
+        expanded_label[expand_id] = his_label[expand_id]
 
-        # Monitor statistics
+        # Combine selected clean and expanded samples
+        labeled_id = torch.cat([clean_id, expand_id]).unique(sorted=True)
+        selected_id = labeled_id
+        if selected_id.numel() == 0:
+            selected_id = torch.where(his_score >= args.zeta)[0]
+        if selected_id.numel() == 0:
+            selected_id = torch.arange(num_samples, device=feature_bank.device)
+
         num_clean = len(clean_id)
-        num_closed = len(noisy_closed_id)
-        num_open = len(noisy_open_id)
-        correct_relabelling = torch.sum(modified_label[conf_id] == clean_label[conf_id])
-
-        print(f'Epoch [{epoch}/{args.epochs}] selection: clean={num_clean} closed_noise={num_closed} open_noise={num_open}')
-        print(f'Epoch [{epoch}/{args.epochs}] relabelling: correct: {correct_relabelling} total: {len(conf_id)}')
-
-        stat_logs.write(f'Epoch [{epoch}/{args.epochs}] selection: clean={num_clean} closed_noise={num_closed} open_noise={num_open}\n')
+        num_expand = len(expand_id)
+        num_selected = len(selected_id)
+        print(f'Epoch [{epoch}/{args.epochs}] selection: clean={num_clean} expand={num_expand} selected={num_selected} noisy={len(noisy_id)}')
+        stat_logs.write(f'Epoch [{epoch}/{args.epochs}] selection: clean={num_clean} expand={num_expand} selected={num_selected} noisy={len(noisy_id)}\n')
         stat_logs.flush()
 
-        # Save three samples statistics to JSON file
-        # if log_dir is not None:
-        #     save_three_samples_statistic(num_clean, num_closed, num_open, epoch, log_dir)
-
-    # 兼容返回：noisy_id 为 closed+open 的并集
-    if len(noisy_closed_id) > 0 and len(noisy_open_id) > 0:
-        noisy_id = torch.cat([noisy_closed_id, noisy_open_id])
-    elif len(noisy_closed_id) > 0:
-        noisy_id = noisy_closed_id
-    else:
-        noisy_id = noisy_open_id
-
-    return clean_id, noisy_id, modified_label
+    return selected_id, noisy_id, expanded_label
 
 
 def main():
@@ -528,8 +472,6 @@ def main():
 
     # Extract labels for monitoring
     noisy_label = eval_data.label.clone().detach().cuda()
-    clean_label = eval_data.clean_label.clone().detach().cuda()
-
     # Create data loaders
     test_loader = torch.utils.data.DataLoader(
         test_data, batch_size=args.batch_size, shuffle=False,
@@ -586,22 +528,22 @@ def main():
 
     ################################ Training loop ###########################################
     for epoch in range(args.epochs):
-        clean_id, noisy_id, modified_label = evaluate(eval_loader, encoder, classifier, args, noisy_label, clean_label, epoch, stat_logs, log_dir)
+        selected_id, noisy_id, modified_label = evaluate(eval_loader, encoder, classifier, args, noisy_label, epoch, stat_logs, log_dir)
 
-        # Create D_labeled: balanced sampler for clean data (selected by sample selection)
+        # Create D_labeled from selected samples only
         # Used for supervised learning (L_ce)
-        clean_subset = Subset(train_data, clean_id.cpu())
-        sampler = ClassBalancedSampler(labels=modified_label[clean_id], num_classes=args.num_classes)
+        labeled_subset = Subset(train_data, selected_id.cpu())
+        sampler = ClassBalancedSampler(labels=modified_label[selected_id], num_classes=args.num_classes)
         labeled_loader = torch.utils.data.DataLoader(
-            clean_subset, batch_size=args.batch_size,
+            labeled_subset, batch_size=args.batch_size,
             sampler=sampler, num_workers=4, drop_last=True
         )
 
         # Use all_loader for self-supervised contrastive learning 
         # Note: all_loader contains ALL training samples (including clean_id)
-        print(f'Epoch {epoch}: Total samples={len(all_data)}, Clean (D_labeled)={len(clean_id)} ({len(clean_id)/len(all_data)*100:.1f}%)')
+        print(f'Epoch {epoch}: Total samples={len(all_data)}, Selected={len(selected_id)} ({len(selected_id)/len(all_data)*100:.1f}%)')
 
-        train(labeled_loader, modified_label, all_loader, encoder, classifier, proj_head, pred_head, optimizer, epoch, args, clean_label, log_dir)
+        train(labeled_loader, modified_label, all_loader, encoder, classifier, proj_head, pred_head, optimizer, epoch, args, log_dir=log_dir)
 
         # Evaluate and save checkpoint
         cur_acc = test(test_loader, encoder, classifier, epoch)

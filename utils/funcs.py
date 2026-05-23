@@ -32,11 +32,15 @@ def D(p, z, version='simplified'):  # negative cosine similarity
         raise Exception
 
 
-def knn_predict(feature, feature_bank, feature_labels, classes, knn_k, batch_size=1000):
+def knn_predict(feature, feature_bank, feature_labels, classes, knn_k, batch_size=1000, exclude_self_indices=None):
     # compute cos similarity between each feature vector and feature bank ---> [B, N]
     # For large feature banks, compute similarity in batches to avoid OOM
     num_features = feature.size(0)
     num_bank = feature_bank.size(1)
+    if exclude_self_indices is not None:
+        knn_k = min(knn_k, max(1, num_bank - 1))
+    else:
+        knn_k = min(knn_k, num_bank)
     
     # If feature bank is very large, use batched computation
     if num_features * num_bank > 100000000:  # ~400MB for float32
@@ -50,6 +54,10 @@ def knn_predict(feature, feature_bank, feature_labels, classes, knn_k, batch_siz
             
             # Compute similarity for this batch
             sim_matrix_batch = torch.mm(batch_feature, feature_bank)
+            if exclude_self_indices is not None:
+                batch_self_indices = exclude_self_indices[i:end_idx]
+                row_ids = torch.arange(sim_matrix_batch.size(0), device=sim_matrix_batch.device)
+                sim_matrix_batch[row_ids, batch_self_indices] = float('-inf')
             sim_weight_batch, sim_indices_batch = sim_matrix_batch.topk(k=knn_k, dim=-1)
             
             all_sim_weights.append(sim_weight_batch)
@@ -64,6 +72,9 @@ def knn_predict(feature, feature_bank, feature_labels, classes, knn_k, batch_siz
     else:
         # Original implementation for smaller datasets
         sim_matrix = torch.mm(feature, feature_bank)
+        if exclude_self_indices is not None:
+            row_ids = torch.arange(sim_matrix.size(0), device=sim_matrix.device)
+            sim_matrix[row_ids, exclude_self_indices] = float('-inf')
         sim_weight, sim_indices = sim_matrix.topk(k=knn_k, dim=-1)
     
     # [B, K]
@@ -84,7 +95,7 @@ def knn_predict(feature, feature_bank, feature_labels, classes, knn_k, batch_siz
     pred_labels = pred_scores.argmax(dim=-1)
     return pred_scores, pred_labels
 
-def weighted_knn(cur_feature, feature, label, num_classes, knn_k=100, chunks=10, norm='global'):
+def weighted_knn(cur_feature, feature, label, num_classes, knn_k=100, chunks=10, norm='global', exclude_self=False):
     # distributed fast KNN and sample selection with three different modes
     num = len(cur_feature)
     num_class = torch.tensor([torch.sum(label == i).item() for i in range(num_classes)]).to(
@@ -99,7 +110,11 @@ def weighted_knn(cur_feature, feature, label, num_classes, knn_k=100, chunks=10,
             torch.cuda.empty_cache()
             part_feature = cur_feature[split[i]: split[i + 1]]
 
-            part_score, part_pred = knn_predict(part_feature, feature.T, label, num_classes, knn_k)
+            self_indices = None
+            if exclude_self:
+                self_indices = torch.arange(split[i].item(), split[i + 1].item(), device=feature.device)
+
+            part_score, part_pred = knn_predict(part_feature, feature.T, label, num_classes, knn_k, exclude_self_indices=self_indices)
             score = torch.cat([score, part_score], dim=0)
             pred = torch.cat([pred, part_pred], dim=0)
 
